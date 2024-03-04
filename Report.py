@@ -33,7 +33,7 @@ with st.container():
     st.title('Report - GitHub Profile')
 
     if df_user.empty:
-        st.warning('Enter a valid Github profile name.')
+        st.warning('Enter a valid Github profile name or wait to make another request.')
     else:
         st.table(df_user)
 

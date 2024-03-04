@@ -32,7 +32,7 @@ with st.container():
     st.title('Dashboard - GitHub Profile')
 
     if df_user.empty:
-        st.warning('Enter a valid Github profile name.')
+        st.warning('Enter a valid Github profile name or wait to make another request.')
     else:
         subtitle = f'Username: {username_input}'
         st.write(subtitle)
