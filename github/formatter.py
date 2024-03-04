@@ -7,9 +7,12 @@ class GitHubDataFormatter:
 
     _FIELDS_USER = ['login', 'name', 'email', 'id', 'bio', 'location', 'company', 'followers', 'following',
                     'created_at', 'public_repos']
+    _MONTH_NUMBER_NAME_DICT = {'01': 'Jan', '02': 'Feb', '03': 'Mar', '04': 'Apr', '05': 'May', '06': 'Jun',
+                               '07': 'Jul', '08': 'Aug', '09': 'Sep', '10': 'Oct', '11': 'Nov', '12': 'Dec'}
 
     def __init__(_self):
-        print('New GitHubDataFormatter created.')
+        pass
+        # print('New GitHubDataFormatter created.')
 
     def _create_df_user_info(_self, user_info_dict):
 
@@ -43,7 +46,10 @@ class GitHubDataFormatter:
     def _create_df_languages_count(_self, user_repos_list, type='created'):
 
         if len(user_repos_list) == 0:
-            return pd.DataFrame()
+            languages_dict = {f'Languages in {type} repositories': '0',
+                              f'{type.capitalize()} repositories': '0'}
+            df_languages_count = pd.DataFrame(list(languages_dict.items()), columns=['Field', 'Value'])
+            return df_languages_count
 
         languages_set = set(map(lambda repo: repo.get('language'), user_repos_list))
         languages_list = list(filter(lambda language: language is not None, languages_set))
@@ -84,6 +90,46 @@ class GitHubDataFormatter:
         df_report.index = df_report.index + 1
 
         return df_report
+
+    def get_imagem_profile(_self, user_info_dict):
+        return user_info_dict.get('avatar_url')
+
+    def filter_remove_fields_prefix_df(_self, df_report, field_prefix):
+        fields = df_report['Field'].unique().tolist()
+        filtered_fields = [field for field in fields if field.startswith(field_prefix)]
+        df_filtered_fields = df_report[df_report['Field'].isin(filtered_fields)].copy()
+        df_filtered_fields['Field'] = df_filtered_fields.loc[:, 'Field'].str.replace(field_prefix, '')
+        df_filtered_fields = df_filtered_fields.reset_index(drop=True)
+        df_filtered_fields.index = df_filtered_fields.index + 1
+        df_filtered_fields.columns = ['Language', 'Quantity']
+        df_filtered_fields['Quantity'] = df_filtered_fields['Quantity'].astype(int)
+
+        return df_filtered_fields
+
+    def create_df_from_date(_self, user_repos_list, first_year, last_year):
+        count_by_date = {}
+        for year in range(first_year, last_year+1):
+            for month in range(1, 10):
+                key_date = '0' + str(month) + '/' + str(year)
+                count_by_date[key_date] = 0
+
+            for month in range(10, 13):
+                key_date = str(month) + '/' + str(year)
+                count_by_date[key_date] = 0
+
+        for repo in user_repos_list:
+            date_creation = repo.get('created_at')
+            data_obj = datetime.strptime(date_creation, '%Y-%m-%dT%H:%M:%SZ')
+            data_formated = data_obj.strftime('%m/%Y')
+            count_by_date[data_formated] = count_by_date[data_formated] + 1
+
+        df_count_by_date = pd.DataFrame(count_by_date.items(), columns=['Date', 'Quantity'])
+
+        return df_count_by_date
+
+    def format_month_column(_self, df_date):
+        df_date['Month'] = df_date['Month'].map(GitHubDataFormatter._MONTH_NUMBER_NAME_DICT)
+        return df_date
 
 
 @st.cache_data

@@ -5,8 +5,10 @@ import requests
 class GitHubDataScraper:
 
     def __init__(_self):
-        print('New GitHubDataScraper created.')
+        pass
+        # print('New GitHubDataScraper created.')
 
+    @st.cache_data
     def get_github_user_info(_self, username):
         url = f"https://api.github.com/users/{username}"
         response = requests.get(url)
@@ -17,6 +19,7 @@ class GitHubDataScraper:
         else:
             return {}
 
+    @st.cache_data
     def get_github_user_repos(_self, username, total_repos):
         user_repos_list = []
         per_page = 100
@@ -35,6 +38,17 @@ class GitHubDataScraper:
                 return []
 
         return user_repos_list
+
+    @st.cache_data
+    def get_github_image_profile(_self, username):
+        url = f"https://api.github.com/users/{username}"
+        response = requests.get(url)
+
+        if response.status_code == 200:
+            user_info = response.json().get('avatar_url')
+            return user_info
+        else:
+            return ''
 
 
 @st.cache_data
