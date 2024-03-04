@@ -50,14 +50,18 @@ with st.container():
         st_col_1, st_col_2 = st.columns(2)
 
         with st_col_1:
-            fig_col_1 = github_data_service.plot_bar_prefixed_fields(df_user, field_prefix='Created repositories in ')
+            fig_col_1 = github_data_service.plot_bar_prefixed_fields(df_user,
+                                                                     field_prefix='Created repositories in ',
+                                                                     is_reversed=False)
             if isinstance(fig_col_1, str):
-                st.write(fig_col_1)
+                st.markdown(f"<h5 style='text-align: center;'>{fig_col_1}</h5>", unsafe_allow_html=True)
             else:
                 st.plotly_chart(fig_col_1, use_container_width=True)
 
         with st_col_2:
-            fig_col_2 = github_data_service.plot_bar_prefixed_fields(df_user, field_prefix='Forked repositories in ')
+            fig_col_2 = github_data_service.plot_bar_prefixed_fields(df_user,
+                                                                     field_prefix='Forked repositories in ',
+                                                                     is_reversed=True)
             if isinstance(fig_col_2, str):
                 st.markdown(f"<h5 style='text-align: center;'>{fig_col_2}</h5>", unsafe_allow_html=True)
 

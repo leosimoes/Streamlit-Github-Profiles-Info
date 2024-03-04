@@ -21,8 +21,13 @@ class GitHubDataService:
     @st.cache_data
     def create_table_user_info(_self, username):
         user_info_dict = _self.scraper.get_github_user_info(username)
+
+        if not user_info_dict:
+            return pd.DataFrame()
+
         total_repos = int(user_info_dict.get('public_repos', 0))
         user_repos_list = _self.scraper.get_github_user_repos(username, total_repos)
+
         df_user = _self.formatter.create_table_report_user(user_info_dict, user_repos_list)
 
         return df_user
@@ -33,6 +38,9 @@ class GitHubDataService:
 
     @st.cache_data
     def create_metrics_info(_self, df_user):
+        if df_user.empty:
+            return []
+
         fields_list = df_user['Field'].unique().tolist()
         metrics_info_list = []
         for field in GitHubDataService._FIELDS_METRICS_LIST:
@@ -50,7 +58,7 @@ class GitHubDataService:
         return _self.scraper.get_github_image_profile(username)
 
     @st.cache_data
-    def plot_bar_prefixed_fields(_self, df_report, field_prefix):
+    def plot_bar_prefixed_fields(_self, df_report, field_prefix, is_reversed):
         df_filtered_fields = _self.formatter.filter_remove_fields_prefix_df(df_report, field_prefix=field_prefix)
 
         if df_filtered_fields.empty:
@@ -60,7 +68,8 @@ class GitHubDataService:
         df_filtered_fields = df_filtered_fields.head(num_bars)
 
         fig = _self.ploter.plot_hotizontal_bar(df_filtered_fields, 'Language',
-                                               f'Top {num_bars} language(s) in {field_prefix[:-4]}')
+                                               f'Top {num_bars} language(s) in {field_prefix[:-4]}',
+                                               is_reversed)
 
         return fig
 

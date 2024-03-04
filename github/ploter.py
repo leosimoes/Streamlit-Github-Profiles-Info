@@ -22,12 +22,12 @@ class GitHubDataPloter:
                      color=col,
                      color_discrete_sequence=[GitHubDataPloter._COLOR_BARS],
                      title=title,
-                     height=GitHubDataPloter._FIGURE_HEIGHT
+                     height=GitHubDataPloter._FIGURE_HEIGHT,
+                     orientation='h'
                      )
 
         fig.update_layout(showlegend=False)
         fig.update_layout(title=GitHubDataPloter._FIGURE_TITLE_LAYOUT)
-        fig.update_layout(yaxis=dict(autorange="reversed"))
         fig.update_traces(textposition='inside')
         fig.update_xaxes(title=None)
         fig.update_yaxes(title=None)
