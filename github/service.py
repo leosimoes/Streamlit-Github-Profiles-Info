@@ -62,7 +62,7 @@ class GitHubDataService:
         df_filtered_fields = _self.formatter.filter_remove_fields_prefix_df(df_report, field_prefix=field_prefix)
 
         if df_filtered_fields.empty:
-            return f'No (languages in ){field_prefix[:-4]}'
+            return f'No languages detected in {field_prefix[:-4]}.'
 
         num_bars = min(GitHubDataService._NUMBER_OF_BARS_RECOMMENDED, df_filtered_fields.shape[0])
         df_filtered_fields = df_filtered_fields.head(num_bars)
