@@ -28,9 +28,9 @@ class GitHubDataPloter:
 
         fig.update_layout(showlegend=False)
         fig.update_layout(title=GitHubDataPloter._FIGURE_TITLE_LAYOUT)
-        fig.update_traces(textposition='inside')
         fig.update_xaxes(title=None)
         fig.update_yaxes(title=None)
+        fig.update_traces(textposition='inside')
 
         if is_reversed:
             fig.update_layout(xaxis=dict(autorange='reversed'), yaxis=dict(side='right'))
